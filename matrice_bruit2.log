@@ -1,0 +1,12 @@
+nano   bruit 0.1 graine 1 : ÉCHEC — réseau indisponible après 4 essais : <urlopen error [Errno 11001] getaddrinfo failed>
+nano   bruit 0.1 graine 2 : gain 1.375 | DD 85% | récup 8.5 | 364s | 0.00825 $
+nano   bruit 0.1 graine 3 : gain 1.975 | DD 55% | récup 3.14 | 283s | 0.01005 $
+ultra  bruit 0.05 graine 1 : ÉCHEC — réseau indisponible après 4 essais : <urlopen error [Errno 11001] getaddrinfo failed>
+ultra  bruit 0.05 graine 2 : ÉCHEC — réseau indisponible après 4 essais : <urlopen error [Errno 11001] getaddrinfo failed>
+ultra  bruit 0.05 graine 3 : gain 2.7 | DD 2% | récup 1.0 | 186s | 0.13656 $
+ultra  bruit 0.1 graine 1 : gain 2.2 | DD 28% | récup 1.83 | 511s | 0.39241 $
+ultra  bruit 0.1 graine 2 : gain 2.475 | DD 8% | récup 1.0 | 472s | 0.34796 $
+ultra  bruit 0.1 graine 3 : gain 2.525 | DD 2% | récup 1.0 | 490s | 0.33159 $
+super  bruit 0.1 graine 1 : gain 2.0 | DD 20% | récup 1.6 | 594s | 0.07313 $
+super  bruit 0.1 graine 2 : gain 2.6 | DD 12% | récup 1.67 | 412s | 0.05057 $
+=== MATRICE 2 TERMINEE ===

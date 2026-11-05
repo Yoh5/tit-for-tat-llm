@@ -1,0 +1,516 @@
+{
+  "resume": {
+    "palier": "nano",
+    "tours": 50,
+    "gain_llm_par_tour": 2.96,
+    "gain_dd_par_tour": 2.96,
+    "taux_coop_llm": 0.96,
+    "coop_mutuelle": 0.92,
+    "reponses_illisibles": 23,
+    "cout_total_usd": 0.00716,
+    "cout_par_tour_usd": 0.000143,
+    "secondes": 105.7
+  },
+  "journal": [
+    {
+      "tour": 1,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000154,
+      "latence_s": 2.46,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2567 chars of reasoning and no content]"
+    },
+    {
+      "tour": 2,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000132,
+      "latence_s": 2.9,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 3,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 9.5e-05,
+      "latence_s": 2.13,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 4,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 6.2e-05,
+      "latence_s": 1.41,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 5,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 8.5e-05,
+      "latence_s": 1.58,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 6,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 8.5e-05,
+      "latence_s": 1.69,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 7,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 8.8e-05,
+      "latence_s": 1.89,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 8,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 9e-05,
+      "latence_s": 1.76,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 9,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00013,
+      "latence_s": 2.08,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 10,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 6e-05,
+      "latence_s": 0.98,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 11,
+      "llm": "DEFECT",
+      "dd": "COOPERATE",
+      "gain_llm": 5,
+      "cout_usd": 0.000128,
+      "latence_s": 2.14,
+      "illisible": false,
+      "reponse": "DEFECT"
+    },
+    {
+      "tour": 12,
+      "llm": "COOPERATE",
+      "dd": "DEFECT",
+      "gain_llm": 0,
+      "cout_usd": 0.000156,
+      "latence_s": 2.11,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 13,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000166,
+      "latence_s": 2.22,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2424 chars of reasoning and no content]"
+    },
+    {
+      "tour": 14,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00011,
+      "latence_s": 1.74,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 15,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00012,
+      "latence_s": 1.62,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 16,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000169,
+      "latence_s": 2.15,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2359 chars of reasoning and no content]"
+    },
+    {
+      "tour": 17,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00017,
+      "latence_s": 2.31,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2417 chars of reasoning and no content]"
+    },
+    {
+      "tour": 18,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000117,
+      "latence_s": 1.85,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 19,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000132,
+      "latence_s": 1.88,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 20,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000174,
+      "latence_s": 2.41,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2575 chars of reasoning and no content]"
+    },
+    {
+      "tour": 21,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000175,
+      "latence_s": 2.74,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2564 chars of reasoning and no content]"
+    },
+    {
+      "tour": 22,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.4,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2540 chars of reasoning and no content]"
+    },
+    {
+      "tour": 23,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00012,
+      "latence_s": 1.62,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 24,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.24,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 25,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000134,
+      "latence_s": 2.19,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 26,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.41,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2432 chars of reasoning and no content]"
+    },
+    {
+      "tour": 27,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.61,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2574 chars of reasoning and no content]"
+    },
+    {
+      "tour": 28,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.23,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2541 chars of reasoning and no content]"
+    },
+    {
+      "tour": 29,
+      "llm": "DEFECT",
+      "dd": "COOPERATE",
+      "gain_llm": 5,
+      "cout_usd": 0.000106,
+      "latence_s": 1.39,
+      "illisible": false,
+      "reponse": "DEFECT"
+    },
+    {
+      "tour": 30,
+      "llm": "COOPERATE",
+      "dd": "DEFECT",
+      "gain_llm": 0,
+      "cout_usd": 0.000167,
+      "latence_s": 2.24,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 31,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.8,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2440 chars of reasoning and no content]"
+    },
+    {
+      "tour": 32,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.95,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2545 chars of reasoning and no content]"
+    },
+    {
+      "tour": 33,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.62,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 1835 chars of reasoning and no content]"
+    },
+    {
+      "tour": 34,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.55,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2643 chars of reasoning and no content]"
+    },
+    {
+      "tour": 35,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.18,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 1764 chars of reasoning and no content]"
+    },
+    {
+      "tour": 36,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000117,
+      "latence_s": 1.93,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 37,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000108,
+      "latence_s": 1.34,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 38,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.16,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2171 chars of reasoning and no content]"
+    },
+    {
+      "tour": 39,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000141,
+      "latence_s": 2.01,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 40,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 9.8e-05,
+      "latence_s": 1.23,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 41,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.17,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2467 chars of reasoning and no content]"
+    },
+    {
+      "tour": 42,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000149,
+      "latence_s": 1.96,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 43,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.14,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2423 chars of reasoning and no content]"
+    },
+    {
+      "tour": 44,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.18,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2458 chars of reasoning and no content]"
+    },
+    {
+      "tour": 45,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.35,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2516 chars of reasoning and no content]"
+    },
+    {
+      "tour": 46,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 3.11,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2164 chars of reasoning and no content]"
+    },
+    {
+      "tour": 47,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.00017,
+      "latence_s": 2.52,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 48,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 8.3e-05,
+      "latence_s": 1.18,
+      "illisible": false,
+      "reponse": "COOPERATE"
+    },
+    {
+      "tour": 49,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.54,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2637 chars of reasoning and no content]"
+    },
+    {
+      "tour": 50,
+      "llm": "COOPERATE",
+      "dd": "COOPERATE",
+      "gain_llm": 3,
+      "cout_usd": 0.000176,
+      "latence_s": 2.37,
+      "illisible": true,
+      "reponse": "[no answer: finish_reason=length, 2534 chars of reasoning and no content]"
+    }
+  ]
+}
