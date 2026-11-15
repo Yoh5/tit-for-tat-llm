@@ -119,6 +119,26 @@ def premiere_trahison(mes_coups: list[int]) -> int | None:
     return None
 
 
+def avec_reprise(appeler, essais: int = 6):
+    """Réessaie les pannes RÉSEAU, jamais le contenu.
+
+    Le 05/11 et le 14/11, 52 parties sont mortes sur `getaddrinfo failed` : la
+    résolution DNS de la machine, pas les modèles. Une partie de 50 tours qui
+    meurt au tour 30 sur une coupure jette 30 tours payés. Un coup illisible,
+    lui, n'est pas une panne réseau et garde son traitement (un second tirage,
+    puis l'abandon déclaré) : ce n'est pas ici qu'on le rattrape.
+    """
+    def appel(palier, invite):
+        for essai in range(essais):
+            try:
+                return appeler(palier, invite)
+            except (OSError, TimeoutError) as why:   # URLError hérite d'OSError
+                if essai == essais - 1:
+                    raise
+                time.sleep(min(60, 5 * 2 ** essai))
+    return appel
+
+
 def une_partie(palier: str, repetition: int, tours: int, appeler, usages: list) -> dict:
     adverse = S.donnant_donnant()
     adverse.nouvelle_partie()
@@ -208,8 +228,8 @@ def deja_faites(palier: str) -> set[int]:
 
 def jouer_palier(palier: str, repetitions: int, tours: int, cle: str) -> None:
     usages: list[dict] = []
-    appeler = nebius_call(api_key=cle, temperature=0.7, max_tokens=JETONS[palier],
-                          on_usage=usages.append)
+    appeler = avec_reprise(nebius_call(api_key=cle, temperature=0.7, max_tokens=JETONS[palier],
+                                       on_usage=usages.append))
     faites = deja_faites(palier)
     if faites:
         print(f"[{palier}] {len(faites)} partie(s) deja mesuree(s), on reprend")

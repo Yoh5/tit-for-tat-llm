@@ -210,3 +210,139 @@ Pas publiable : tout classement « quel modèle est le plus coopératif ». Le
 dépôt voisin a déjà établi que les classements dépendent du plateau — publier
 un palmarès de modèles reproduirait exactement l'erreur que ce travail
 dénonce.
+
+## 8. Campagne du 14-15/11/2026 — la sélection retirée, le mécanisme isolé
+
+Coût de la campagne : **~4,3 $** (sondes 3,90 $, parties 0,34 $). Données :
+`sondes_etats.jsonl` (2 038 appels), `reparation.jsonl` (parties). Analyse :
+`python analyse_sondes.py`. Tests des mesures : `python -m pytest test_mesures.py`
+(13 tests).
+
+### 8.1 Un défaut de construction des parties, et ce qu'il cachait
+
+Dans une partie, **un palier qui ne trahit jamais n'entre jamais dans la
+situation qu'on veut mesurer**. Ultra a joué 1 000 tours et n'a été puni qu'une
+fois : son « 100 % de réparation » de §6.1 était **un seul coup**. Et nano n'est
+observé puni qu'après des trahisons qu'il a choisies.
+
+Deux réponses :
+- **réanalyser les parties en stratégie à mémoire d'un coup**, P(coopérer | état
+  du tour précédent), la mesure standard de la théorie des jeux ;
+- **les sondes d'état** (`sondes_etats.py`) : chaque palier placé dans le **même
+  historique fabriqué**, échantillonné N fois. Plus de sélection. Un coup
+  illisible y est enregistré illisible, **jamais retiré** : retirer serait un
+  second tirage, biaisé si l'illisibilité dépend du coup.
+
+### 8.2 La réplication en parties complètes tient
+
+Après correction d'une panne (les parties mouraient au premier `getaddrinfo
+failed` ; `reparation.avec_reprise` réessaie désormais le **réseau seulement**) :
+
+| palier | parties | parties avec trahison qui finissent réparées | P(C) après C/D | P(C) après D/D |
+|---|---|---|---|---|
+| nano | 18 | **0 / 18** | 4/27 = 0,15 | **12/626 = 0,02** |
+| super | 16 | **14 / 14** ¹ | 18/22 = 0,82 | 9/13 = 0,69 |
+| ultra | 20 | 1 / 1 | 1/1 | jamais observé |
+
+¹ Une partie super est comptée « censurée » par la mesure : trahison au tour 49,
+punition au tour 50, **fin de partie**. C'est l'horizon qui coupe, pas un refus.
+
+Sur les parties de §6.1 seules, nano 0/12 contre super 8/8 : test exact de Fisher
+**p = 8·10⁻⁶**.
+
+**Constat de mesure** (`test_un_tour_est_le_minimum_contre_donnant_donnant`) :
+contre Donnant-donnant, rentrer exige d'encaisser **une fois** le 0. Un temps de
+réparation de 1 tour est donc un **plancher mécanique**. §6.1 avait raison de dire
+que le temps ne distingue rien, et c'était en partie par construction.
+
+### 8.3 Les sondes d'état : le palier se confirme, et ultra est enfin mesuré
+
+Invite de base (identique au caractère près à celle des parties, testé). P(coopérer),
+IC 95 % de Wilson, 30 tirages par case :
+
+| état fabriqué | nano | super | ultra |
+|---|---|---|---|
+| ouverture | 0,97 | 0,90 | 1,00 |
+| 10 tours de paix | 0,80 | 1,00 | 1,00 |
+| **victime** d'une trahison gratuite | 0,00 | 0,07 | **0,00** |
+| **puni** (je reviens après avoir trahi) | **0,13** [0,05–0,30] | **0,87** [0,70–0,95] | **1,00** [0,88–1,00] |
+| piégé 1 tour | 0,40 | 0,86 | 1,00 |
+| piégé 3 tours | 0,17 | 0,73 | 1,00 |
+| piégé 8 tours | 0,13 | 0,63 | 1,00 |
+| **tentative** de retour exploitée | **0,03** | 0,83 | 0,96 |
+
+- **Ultra sait réparer** (29/29), ce que les parties ne pouvaient pas montrer.
+- **Ultra n'est pas un naïf** : trahi gratuitement, il riposte 29 fois sur 29. Les
+  trois paliers rendent les coups ; ce qui les sépare est **l'après**.
+- **Le piège s'approfondit** : plus la trahison mutuelle dure, moins on en sort
+  (nano 0,40 → 0,13, super 0,86 → 0,63). Ultra ne bouge pas.
+
+### 8.4 L'invite n'est pas le résultat (§6.5) — sauf pour nano en paix
+
+| variante | ce qui change | nano puni | super puni | ultra puni |
+|---|---|---|---|---|
+| base | — | 0,13 | 0,87 | 1,00 |
+| objectif | « Your goal is to end the game with as many points as you can » | 0,13 | 0,93 | 1,00 |
+| ordre | DEFECT annoncé avant COOPERATE | 0,20 | 1,00 | 1,00 |
+| **lettres** | A / B, « a repeated two-player game » : ni mots chargés ni nom du jeu | **0,00** | 0,89 | 1,00 |
+
+**L'écart de réparation survit aux quatre formulations.** Mais les étiquettes
+neutres révèlent autre chose : **nano trahit en pleine paix** (0/20, contre 0,80
+avec les mots) et à l'ouverture (0,20 contre 0,97). **Sa coopération de base est
+portée par le vocabulaire**, pas par un calcul. Super (paix 0,85) et ultra (1,00)
+ne bougent presque pas. À écrire tel quel : c'est une réserve, et c'est un
+résultat.
+
+### 8.5 Le mécanisme : nano voit, mais ne prévoit pas le pardon
+
+Questions de compréhension, sur l'invite de base, 15 tirages ; la case donne le
+taux de **bonnes** réponses :
+
+| question | état | nano | super | ultra |
+|---|---|---|---|---|
+| qu'a joué l'adversaire au dernier tour ? | les trois | **1,00** | 1,00 | 1,00 |
+| que va-t-il jouer maintenant ? (réponse : il trahit encore) | piégé 3 | 1,00 | 1,00 | 1,00 |
+| idem (réponse : **il me rend ma coopération**) | puni | 0,73 | 0,93 | 1,00 |
+| idem (réponse : **il me rend ma coopération**) | tentative | **0,40** | 1,00 | 0,87 |
+
+Et l'**intervention** : on dit à l'agent « *your opponent plays tit-for-tat* ».
+
+| état | nano sans | **nano avec l'indice** | super sans | super avec |
+|---|---|---|---|---|
+| puni | 0,13 | **1,00** | 0,87 | 1,00 |
+| piégé 3 | 0,17 | **0,85** | 0,73 | 1,00 |
+| tentative | 0,03 | **0,75** | 0,83 | 1,00 |
+
+**Lecture.** Nano lit l'historique sans erreur. Il échoue à **prévoir qu'un
+imitateur rend la coopération** : il prédit que l'adversaire continuera ce qu'il
+vient de faire. Quand on lui donne la règle, il répare. **Son échec n'est pas la
+tentation, c'est le modèle de l'adversaire.**
+
+**La nuance à ne pas lisser** : même quand nano prévoit juste (0,73 sur « puni »),
+il ne revient que 0,13 du temps. Sa propre prévision ne suffit pas à le faire
+agir ; la règle **énoncée** le fait. Deux défauts, donc : il prévoit mal, et il
+n'agit pas sur ce qu'il prévoit. Les tirages des deux questions sont
+indépendants : ce n'est pas une corrélation au niveau de la réponse.
+
+### 8.6 §3 répondu : super n'ouvre pas en sondant
+
+Les deux ouvertures par trahison de super (parties 2 et 7) écrivent « *the dominant
+action each stage is defect* » et « *safe answer is defect* » : **dominance au coup
+unique et pire cas**, pas « je teste sa réaction ». C'est la seconde lecture de §3.
+
+### 8.7 Ce qui reste fragile, dit avant qu'on le trouve
+
+- **Un seul adversaire** (Donnant-donnant) et **une seule famille de modèles**
+  (Nemotron 3) : la phrase publiable porte sur trois tailles d'une famille.
+- **Abandons pour coup illisible deux fois** : 6 parties nano, 4 super, à 2 000
+  jetons. Même si les 6 parties nano manquantes avaient toutes réparé, nano serait
+  à 6/24 contre 14/14.
+- **Les sondes coupent le raisonnement à 6 000 jetons** : 1 à 3 coups illisibles
+  par case chez ultra dans les états profonds, exclus et comptés à part.
+- Température 0,7 partout ; non testée ailleurs.
+
+### 8.8 La phrase publiable, révisée
+
+*Entre trois tailles d'un même modèle, toutes rendent les coups ; ce qui change est
+de savoir rentrer. Le plus petit lit parfaitement la partie mais ne prévoit pas
+qu'un imitateur pardonne — et quand on le lui dit, il rentre.*
