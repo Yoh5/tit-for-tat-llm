@@ -214,7 +214,7 @@ dénonce.
 ## 8. Campagne du 14-15/11/2026 — la sélection retirée, le mécanisme isolé
 
 Coût de la campagne : **~4,3 $** (sondes 3,90 $, parties 0,34 $). Données :
-`sondes_etats.jsonl` (2 038 appels), `reparation.jsonl` (parties). Analyse :
+`sondes_etats.jsonl` (1 838 appels), `reparation.jsonl` (parties). Analyse :
 `python analyse_sondes.py`. Tests des mesures : `python -m pytest test_mesures.py`
 (13 tests).
 
@@ -241,7 +241,7 @@ failed` ; `reparation.avec_reprise` réessaie désormais le **réseau seulement*
 | palier | parties | parties avec trahison qui finissent réparées | P(C) après C/D | P(C) après D/D |
 |---|---|---|---|---|
 | nano | 18 | **0 / 18** | 4/27 = 0,15 | **12/626 = 0,02** |
-| super | 16 | **14 / 14** ¹ | 18/22 = 0,82 | 9/13 = 0,69 |
+| super | 16 | **13 / 14** ¹ | 18/22 = 0,82 | 9/13 = 0,69 |
 | ultra | 20 | 1 / 1 | 1/1 | jamais observé |
 
 ¹ Une partie super est comptée « censurée » par la mesure : trahison au tour 49,
@@ -336,7 +336,7 @@ unique et pire cas**, pas « je teste sa réaction ». C'est la seconde lecture 
   (Nemotron 3) : la phrase publiable porte sur trois tailles d'une famille.
 - **Abandons pour coup illisible deux fois** : 6 parties nano, 4 super, à 2 000
   jetons. Même si les 6 parties nano manquantes avaient toutes réparé, nano serait
-  à 6/24 contre 14/14.
+  à 6/24 contre 13/14.
 - **Les sondes coupent le raisonnement à 6 000 jetons** : 1 à 3 coups illisibles
   par case chez ultra dans les états profonds, exclus et comptés à part.
 - Température 0,7 partout ; non testée ailleurs.

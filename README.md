@@ -1,98 +1,128 @@
-# Ce qui sépare deux tailles d'un même modèle, c'est la réparation
+# Ce qui sépare trois tailles d'un même modèle, c'est de savoir revenir
 
 Un agent LLM joue le dilemme du prisonnier itéré contre Donnant-donnant, à trois
-tailles du même modèle. La question de départ était : *est-ce que le gros modèle
-est plus gentil ?*
+tailles du même modèle (Nemotron 3 : nano 30B, super 120B, ultra 550B). La
+question de départ était : *est-ce que le gros modèle est plus gentil ?*
 
-Réponse : non, et la question était mal posée. Le petit modèle trahit **plus
-tôt** que le moyen, et gagne pourtant moitié moins. Ce qui les sépare n'est pas
-de trahir moins, c'est de **savoir rentrer** après avoir été puni.
+Non, et la question était mal posée. **Les trois tailles rendent les coups** :
+trahies sans raison, elles ripostent toutes. Ce qui les sépare, c'est ce qui se
+passe **après** : revenir à la coopération quand on a été puni.
 
-| palier | parties | 1re trahison (médiane) | ne trahit jamais | gain/tour | **répare** |
-| --- | --- | --- | --- | --- | --- |
-| nano | 12 | tour **8,5** | 0/12 | 1,593 | **14 %** (2 épisodes sur 14) |
-| super | 9 | tour **14,5** | 1/9 | 2,956 | **100 %** (9 sur 9) |
-| ultra | 20 | tour 8 (une seule) | **19/20** | 2,999 | 100 % (1 sur 1) |
+![Probabilité de coopérer selon la situation, par taille de modèle](figures/reparation.png)
 
-41 parties complètes, 50 tours chacune, **1,62 $ d'appels mesurés**. Les trois
-paliers qui réparent le font en une médiane d'**un tour** : le *temps* de
-réparation ne distingue rien, le *taux* distingue tout.
+**Le plus petit lit parfaitement la partie, mais ne prévoit pas qu'un imitateur
+pardonne — et quand on le lui dit, il revient.**
 
-C'était l'erreur de formulation du carnet, et il a fallu la mesurer pour la
-voir. §6.1 de `RECHERCHE.md` proposait de mesurer « combien de tours met-il à
-rentrer » ; la bonne question était « rentre-t-il ».
+## Le résultat, en trois mesures
+
+**1. Dans le même historique fabriqué, la réparation sépare les tailles.**
+Chaque modèle est placé dans exactement la même situation et interrogé 30 fois.
+Probabilité de coopérer au tour suivant, invite d'origine :
+
+| situation | nano | super | ultra |
+| --- | --- | --- | --- |
+| trahi sans raison (riposter ?) | 0,00 | 0,07 | 0,00 |
+| **puni après sa propre trahison** (revenir ?) | **0,13** | **0,87** | **1,00** |
+| trahison mutuelle depuis 3 tours | 0,17 | 0,73 | 1,00 |
+| son retour vient d'être exploité | 0,03 | 0,83 | 0,96 |
+
+**2. Ça tient en parties complètes** (50 tours, Donnant-donnant) :
+
+| palier | parties | ne trahit jamais | parties avec trahison qui finissent réparées | gain moyen/tour |
+| --- | --- | --- | --- | --- |
+| nano | 18 | 0 | **0 / 18** | 1,58 |
+| super | 16 | 2 | **13 / 14** ¹ | 2,94 |
+| ultra | 20 | 19 | 1 / 1 | 3,00 |
+
+¹ La 14ᵉ trahit au tour 49 et est punie au tour 50 : la partie s'arrête avant
+qu'elle puisse revenir. C'est l'horizon qui coupe, pas un refus.
+
+**3. Le mécanisme.** Deux questions de compréhension, posées à part :
+
+| | nano | super | ultra |
+| --- | --- | --- | --- |
+| « qu'a joué l'adversaire au dernier tour ? » | **1,00** | 1,00 | 1,00 |
+| « que va-t-il jouer maintenant ? » quand la bonne réponse est *il me rend ma coopération* | **0,40** | 1,00 | 0,87 |
+
+Puis l'intervention : on ajoute à l'invite *« Your opponent plays tit-for-tat »*.
+Nano puni passe de **0,13 à 1,00**, piégé de 0,17 à 0,85, après une tentative
+exploitée de 0,03 à 0,75.
+
+Nano ne manque pas d'informations ; il manque d'un **modèle de l'adversaire**. Une
+nuance qui n'est pas lissée : même quand il prévoit juste (0,73 des cas, puni), il
+ne revient que 0,13 du temps. Prévoir ne suffit pas à le faire agir ; la règle
+énoncée, si.
+
+## Ce qui a été fait pour essayer de le casser
+
+- **Retirer la sélection.** Dans une partie, un modèle qui ne trahit jamais n'est
+  jamais puni : ultra n'a été puni qu'**une fois en 1 000 tours**, son « 100 % »
+  initial était un seul coup. D'où les sondes d'état, où chaque taille reçoit le
+  même historique.
+- **Changer l'invite** (§6.5 du carnet). Quatre formulations : d'origine, objectif
+  reformulé, options dans l'autre ordre, et des **étiquettes neutres A/B** sans
+  le nom du jeu. L'écart de réparation survit aux quatre.
+- **Une réserve qui est aussi un résultat.** En A/B, **nano trahit même en pleine
+  paix** (0 sur 20, contre 0,80 avec les mots). Sa coopération de base est portée
+  par le vocabulaire. Super et ultra ne bougent presque pas.
+- **Lire les raisonnements.** Quand super ouvre en trahissant, il écrit que trahir
+  est « *the dominant action* » et « *the safe answer* » : dominance et pire cas,
+  pas « je teste sa réaction ».
+- **Tester les mesures elles-mêmes** (`test_mesures.py`, 13 tests). L'un vérifie
+  que l'invite des sondes est identique au caractère près à celle des parties ; un
+  autre établit qu'**un temps de réparation d'un tour est un plancher mécanique**
+  contre Donnant-donnant (revenir exige d'encaisser une fois le 0). Le temps ne
+  pouvait donc pas distinguer les tailles ; le taux, si.
 
 ## Le défaut qui penchait du bon côté
 
-La première exécution annonçait **96 % de coopération** pour nano. Le vrai
-chiffre est **16 %**.
+La toute première exécution annonçait **96 % de coopération** pour nano. Le vrai
+chiffre est **16 %**. À `max_tokens=600`, le raisonnement mangeait tout le budget,
+l'API rendait `content: null`, et mon repli comptait ces tours comme « coopère ».
 
-À `max_tokens=600`, le modèle raisonne avant de répondre, la réflexion mangeait
-tout le budget, l'API rendait `content: null` avec `finish_reason=length`, et mon
-repli comptait ces tours comme « coopère ». 23 tours sur 50. À 2 000 jetons :
-zéro illisible, et le résultat s'inverse.
+**Un coup non lu ne se devine pas.** Dans les parties, il fait échouer la partie ;
+dans les sondes, il est enregistré illisible et **jamais retiré** — retirer serait
+un second tirage, biaisé si l'illisibilité dépend du coup. `resultat_600jetons.json`
+est gardé exprès, comme pièce.
 
-**Un coup non lu ne se devine pas.** Il fait échouer la partie, ou il se
-rapporte à part — jamais un défaut qui penche du côté flatteur.
-`resultat_600jetons.json` est gardé dans le dépôt exprès, comme pièce.
+## Ce que ça ne vaut pas
 
-Et le budget de jetons se dimensionne **par palier**, parce qu'il dépend de la
-longueur du raisonnement, pas de celle de la réponse — qui fait un mot.
+- **Un seul adversaire** (Donnant-donnant), **une seule famille de modèles**
+  (Nemotron 3), **une seule température** (0,7). La phrase porte sur trois
+  tailles d'une famille, pas sur « les LLM ».
+- **Abandons.** 64 parties abandonnées en tout : 54 sur des pannes réseau
+  (`getaddrinfo failed`, coupures), qui ne peuvent pas corréler avec l'issue
+  d'une partie ; **10 sur deux coups illisibles de suite** (6 nano, 4 super). Même
+  si les 6 parties nano manquantes avaient toutes réparé, nano serait à 6 sur 24
+  contre 13 sur 14.
+- **Les sondes coupent le raisonnement à 6 000 jetons** : 1 à 3 réponses
+  illisibles par case chez ultra dans les situations profondes, exclues et
+  comptées à part dans `analyse_sondes.py`.
+- **Aucun classement de modèles, et il n'y en aura pas.** Le dépôt voisin a établi
+  que les palmarès dépendent du plateau.
 
-## Ce que ça coûte, et où part l'argent
+## Ce que ça coûte
 
-| palier | $/tour | latence médiane | 50 tours |
-| --- | --- | --- | --- |
-| nano | 0,000133 | 1,7 s | 0,0066 $ |
-| super | 0,000866 | **9,5 s** | 0,0433 $ |
-| ultra | 0,001254 | 1,3 s | 0,0627 $ |
+| | appels | coût |
+| --- | --- | --- |
+| parties complètes (54) | ~2 700 | 1,96 $ |
+| sondes d'état | 1 838 | 3,90 $ |
 
-**Le coût d'un tour est porté par la délibération, pas par le jeu.** Et il y a
-une bosse au milieu : le modèle moyen est celui qui délibère le plus, le plus
-gros tranche vite. C'est aussi celui du milieu qui sonde puis répare, tandis que
-le plus gros coopère sans jamais rien essayer. Les deux observations vont
-ensemble.
+Le coût d'un tour est porté par la délibération, pas par le jeu : la réponse fait
+un mot, le raisonnement des centaines à des milliers de jetons (médianes mesurées
+dans les sondes : nano 636, super 734, ultra 1 471).
 
-## Ce que ça ne vaut pas encore
-
-L'écart de 14 % à 100 % est énorme, ce qui est encourageant **et** suspect. Ce
-qui manque, dit avant qu'on me le demande :
-
-- **L'échantillon n'est pas celui qui était prévu** : 12, 9 et 20 parties au
-  lieu de 20 partout. **40 parties ont été abandonnées**, et la répartition
-  décide si c'est grave :
-  - **32 sur 40 sont mortes au tour 0**, avant le moindre coup, sur
-    `getaddrinfo failed` — la pile réseau de la machine, pas les modèles. Une
-    panne qui survient avant que la partie existe ne peut pas corréler avec son
-    issue.
-  - 5 sont des coupures réseau en cours de partie.
-  - **3 sont de vrais échecs de lecture**, tous sur nano, aux tours 19, 22 et
-    39. C'est le seul biais possible, et il va dans un sens précis : si le
-    raisonnement de nano s'allonge quand l'historique grossit, ce sont ses
-    parties **les plus difficiles** qui manquent. Trois parties ne retournent
-    pas un écart de 14 % contre 100 %, mais il faut l'écrire.
-- **Un seul adversaire** (Donnant-donnant), **une seule invite**. « Maximise
-  your own total score » est une consigne forte ; changer un mot peut tout
-  déplacer. L'effet doit survivre à trois formulations avant de valoir un
-  article.
-- **Aucun classement de modèles ici, et il n'y en aura pas.** Le dépôt voisin a
-  établi que les palmarès dépendent du plateau ; publier « quel modèle est le
-  plus coopératif » reproduirait exactement l'erreur que ce travail dénonce.
-
-## Les témoins viennent du dépôt voisin, pas d'ici
+## Les témoins viennent du dépôt voisin
 
 [`Yoh5/tit-for-tat`](https://github.com/Yoh5/tit-for-tat) est le tournoi
-déterministe qui sert de référence : Pavlov se relève d'un accident en 2 tours
-quand le coup a dérapé et 3 quand il a été mal perçu, là où deux Donnant-donnant
-ne se relèvent pas dans 76 à 79 % des cas. C'est contre ces chiffres-là que
-« réparer » veut dire quelque chose.
-
-La matrice de gains est **importée** de ce dépôt, jamais recopiée : si elle
-change là-bas, elle change ici.
+déterministe de référence : Pavlov se relève d'un accident en 2 à 3 tours, là où
+deux Donnant-donnant ne se relèvent pas dans 76 à 79 % des cas. La matrice de
+gains est **importée** de ce dépôt, jamais recopiée.
 
 ## Faire tourner
 
-Les deux dépôts voisins sont attendus à côté de celui-ci :
+Les deux dépôts voisins sont attendus à côté de celui-ci (`AI_RACINE` permet de
+les ranger ailleurs) :
 
 ```
 un-dossier/
@@ -101,30 +131,28 @@ un-dossier/
 └── tit-for-tat-llm/    ce dépôt
 ```
 
-`AI_RACINE` permet de les ranger ailleurs. La clé se lit dans
-l'environnement — rien ici ne lit un `.env` suivi par git :
-
 ```bash
-export NEBIUS_API_KEY=...        # set NEBIUS_API_KEY=... sous Windows
+export NEBIUS_API_KEY=...          # set NEBIUS_API_KEY=... sous Windows
 
-python sonde_llm.py --tours 50                   # une partie, un palier, pour voir le coût
-python reparation.py --repetitions 20            # §6.1 : le taux de réparation par palier
-python experience_bruit.py --palier nano --bruit 0.1 --graines 1,2 --tours 40
+python reparation.py --repetitions 20                       # parties complètes
+python sondes_etats.py --variantes base --n 30              # sondes d'état
+python sondes_etats.py --variantes lettres objectif ordre   # robustesse de l'invite
+python sondes_etats.py --variantes q_dernier q_prediction   # compréhension
+python sondes_etats.py --variantes indice                   # l'intervention
+python analyse_sondes.py                                    # tous les tableaux
+python figure_reparation.py                                 # la figure (matplotlib)
+python -m pytest test_mesures.py                            # les mesures testées
 ```
 
-Python 3.10 ou plus, et aucune dépendance hors bibliothèque standard de ce côté.
-
-`reparation.py` écrit chaque partie dès qu'elle finit, dans
-`reparation.jsonl` : une coupure ne redépense rien. Il y en a eu 37.
+Chaque partie et chaque tirage sont écrits dès qu'ils finissent
+(`reparation.jsonl`, `sondes_etats.jsonl`) : une coupure ne redépense rien, et
+relancer reprend où on s'était arrêté. Toutes les figures et tous les tableaux
+sont recalculés depuis ces deux fichiers.
 
 ## Le carnet
 
-`RECHERCHE.md` est le carnet de recherche, en français — l'hypothèse de départ
-réfutée et déclarée telle, la variable recadrée, les six questions ouvertes
-classées par rapport, et la frontière explicite entre ce qui serait publiable et
-ce qui ne l'est pas. Chaque entrée dit ce qu'on a vu, ce que ça vaut, et ce qu'il
-faudrait pour que ça en devienne un résultat.
-
+`RECHERCHE.md` est le carnet de recherche : l'hypothèse de départ réfutée et
+déclarée telle, la variable recadrée deux fois, et la campagne complète au §8.
 C'est la partie de ce dépôt que je lirais d'abord.
 
 ## Licence
