@@ -1,160 +1,173 @@
-# Ce qui sépare trois tailles d'un même modèle, c'est de savoir revenir
+# What separates three sizes of the same model is knowing how to come back
 
-Un agent LLM joue le dilemme du prisonnier itéré contre Donnant-donnant, à trois
-tailles du même modèle (Nemotron 3 : nano 30B, super 120B, ultra 550B). La
-question de départ était : *est-ce que le gros modèle est plus gentil ?*
+> **En bref (français).** Un agent LLM joue le dilemme du prisonnier itéré contre
+> Donnant-donnant, à trois tailles d'un même modèle (Nemotron 3 : 30B, 120B, 550B).
+> Les trois rendent les coups quand on les trahit ; ce qui les sépare, c'est de
+> **revenir à la coopération après avoir été puni** : 0,13 pour le plus petit,
+> 0,87 et 1,00 pour les deux autres, dans le même historique fabriqué. Le plus
+> petit lit parfaitement la partie, mais ne prévoit pas qu'un imitateur pardonne ;
+> quand on lui dit que l'adversaire joue Donnant-donnant, il revient (0,13 → 1,00).
+> L'écart survit à quatre variantes de l'invite. Le carnet de recherche complet
+> est dans `RECHERCHE.md`.
 
-Non, et la question était mal posée. **Les trois tailles rendent les coups** :
-trahies sans raison, elles ripostent toutes. Ce qui les sépare, c'est ce qui se
-passe **après** : revenir à la coopération quand on a été puni.
+An LLM agent plays the iterated prisoner's dilemma against tit-for-tat, at three
+sizes of the same model (Nemotron 3: nano 30B, super 120B, ultra 550B). The
+starting question was: *is the bigger model nicer?*
 
-![Probabilité de coopérer selon la situation, par taille de modèle](figures/reparation.png)
+No, and the question was badly posed. **All three sizes retaliate**: betrayed for
+no reason, they all hit back. What separates them is what happens **after**:
+coming back to cooperation once they have been punished.
 
-**Le plus petit lit parfaitement la partie, mais ne prévoit pas qu'un imitateur
-pardonne — et quand on le lui dit, il revient.**
+![Probability of cooperating by situation, per model size](figures/reparation.png)
 
-## Le résultat, en trois mesures
+**The smallest one reads the game perfectly, but does not expect an imitator to
+forgive — and when told, it comes back.**
 
-**1. Dans le même historique fabriqué, la réparation sépare les tailles.**
-Chaque modèle est placé dans exactement la même situation et interrogé 30 fois.
-Probabilité de coopérer au tour suivant, invite d'origine :
+## The result, in three measures
+
+**1. In the same fabricated history, repair separates the sizes.**
+Each model is placed in exactly the same situation and asked 30 times.
+Probability of cooperating on the next round, original prompt:
 
 | situation | nano | super | ultra |
 | --- | --- | --- | --- |
-| trahi sans raison (riposter ?) | 0,00 | 0,07 | 0,00 |
-| **puni après sa propre trahison** (revenir ?) | **0,13** | **0,87** | **1,00** |
-| trahison mutuelle depuis 3 tours | 0,17 | 0,73 | 1,00 |
-| son retour vient d'être exploité | 0,03 | 0,83 | 0,96 |
+| betrayed for no reason (retaliate?) | 0.00 | 0.07 | 0.00 |
+| **punished after its own defection** (come back?) | **0.13** | **0.87** | **1.00** |
+| mutual defection for 3 rounds | 0.17 | 0.73 | 1.00 |
+| its attempt to come back was just exploited | 0.03 | 0.83 | 0.96 |
 
-**2. Ça tient en parties complètes** (50 tours, Donnant-donnant) :
+**2. It holds in full games** (50 rounds, tit-for-tat):
 
-| palier | parties | ne trahit jamais | parties avec trahison qui finissent réparées | gain moyen/tour |
+| tier | games | never defects | games with a defection that end repaired | mean payoff/round |
 | --- | --- | --- | --- | --- |
-| nano | 18 | 0 | **0 / 18** | 1,58 |
-| super | 16 | 2 | **13 / 14** ¹ | 2,94 |
-| ultra | 20 | 19 | 1 / 1 | 3,00 |
+| nano | 18 | 0 | **0 / 18** | 1.58 |
+| super | 16 | 2 | **13 / 14** ¹ | 2.94 |
+| ultra | 20 | 19 | 1 / 1 | 3.00 |
 
-¹ La 14ᵉ trahit au tour 49 et est punie au tour 50 : la partie s'arrête avant
-qu'elle puisse revenir. C'est l'horizon qui coupe, pas un refus.
+¹ The 14th defects on round 49 and is punished on round 50: the game ends before
+it can come back. The horizon cuts it off, not a refusal.
 
-**3. Le mécanisme.** Deux questions de compréhension, posées à part :
+**3. The mechanism.** Two comprehension questions, asked separately:
 
 | | nano | super | ultra |
 | --- | --- | --- | --- |
-| « qu'a joué l'adversaire au dernier tour ? » | **1,00** | 1,00 | 1,00 |
-| « que va-t-il jouer maintenant ? » quand la bonne réponse est *il me rend ma coopération* | **0,40** | 1,00 | 0,87 |
+| "what did the opponent play last round?" | **1.00** | 1.00 | 1.00 |
+| "what will it play now?" when the right answer is *it returns my cooperation* (after my attempt was exploited) | **0.40** | 1.00 | 0.87 |
 
-Puis l'intervention : on ajoute à l'invite *« Your opponent plays tit-for-tat »*.
-Nano puni passe de **0,13 à 1,00**, piégé de 0,17 à 0,85, après une tentative
-exploitée de 0,03 à 0,75.
+Then the intervention: we add *"Your opponent plays tit-for-tat"* to the prompt.
+Punished nano goes from **0.13 to 1.00**, trapped from 0.17 to 0.85, after an
+exploited attempt from 0.03 to 0.75.
 
-Nano ne manque pas d'informations ; il manque d'un **modèle de l'adversaire**. Une
-nuance qui n'est pas lissée : même quand il prévoit juste (0,73 des cas, puni), il
-ne revient que 0,13 du temps. Prévoir ne suffit pas à le faire agir ; la règle
-énoncée, si.
+Nano does not lack information; it lacks a **model of the opponent**. One nuance
+that is not smoothed over: even when it predicts correctly (0.73 of cases, when
+punished), it only comes back 0.13 of the time. Predicting is not enough to make
+it act; the stated rule is.
 
-## Ce qui a été fait pour essayer de le casser
+## What was done to try to break it
 
-- **Retirer la sélection.** Dans une partie, un modèle qui ne trahit jamais n'est
-  jamais puni : ultra n'a été puni qu'**une fois en 1 000 tours**, son « 100 % »
-  initial était un seul coup. D'où les sondes d'état, où chaque taille reçoit le
-  même historique.
-- **Changer l'invite** (§6.5 du carnet). Quatre formulations : d'origine, objectif
-  reformulé, options dans l'autre ordre, et des **étiquettes neutres A/B** sans
-  le nom du jeu. L'écart de réparation survit aux quatre.
-- **Une réserve qui est aussi un résultat.** En A/B, **nano trahit même en pleine
-  paix** (0 sur 20, contre 0,80 avec les mots). Sa coopération de base est portée
-  par le vocabulaire. Super et ultra ne bougent presque pas.
-- **Lire les raisonnements.** Quand super ouvre en trahissant, il écrit que trahir
-  est « *the dominant action* » et « *the safe answer* » : dominance et pire cas,
-  pas « je teste sa réaction ».
-- **Tester les mesures elles-mêmes** (`test_mesures.py`, 13 tests). L'un vérifie
-  que l'invite des sondes est identique au caractère près à celle des parties ; un
-  autre établit qu'**un temps de réparation d'un tour est un plancher mécanique**
-  contre Donnant-donnant (revenir exige d'encaisser une fois le 0). Le temps ne
-  pouvait donc pas distinguer les tailles ; le taux, si.
+- **Removing selection.** In a game, a model that never defects is never
+  punished: ultra was punished **once in 1,000 rounds**, so its initial "100%"
+  was a single move. Hence the state probes, where every size gets the same
+  history.
+- **Changing the prompt** (§6.5 of the notebook). Four variants: original,
+  reworded goal, options in the other order, and **neutral A/B labels** without
+  the name of the game. The repair gap survives all four.
+- **A caveat that is also a result.** With A/B labels, **nano defects even in
+  full peace** (0 out of 20, against 0.80 with the words). Its baseline
+  cooperation is carried by the vocabulary. Super and ultra barely move.
+- **Reading the reasoning.** When super opens by defecting, it writes that
+  defecting is "*the dominant action*" and "*the safe answer*": dominance and
+  worst case, not "I'm testing its reaction".
+- **Testing the measures themselves** (`test_mesures.py`, 13 tests). One checks
+  that the probe prompt is identical, character for character, to the game
+  prompt; another establishes that **a one-round repair time is a mechanical
+  floor** against tit-for-tat (coming back means taking the 0 once). So time
+  could not separate the sizes; the rate could.
 
-## Le défaut qui penchait du bon côté
+## The bug that leaned the flattering way
 
-La toute première exécution annonçait **96 % de coopération** pour nano. Le vrai
-chiffre est **16 %**. À `max_tokens=600`, le raisonnement mangeait tout le budget,
-l'API rendait `content: null`, et mon repli comptait ces tours comme « coopère ».
+The very first run reported **96% cooperation** for nano. The real number is
+**16%**. At `max_tokens=600`, the reasoning consumed the whole budget, the API
+returned `content: null`, and my fallback counted those rounds as "cooperate".
 
-**Un coup non lu ne se devine pas.** Dans les parties, il fait échouer la partie ;
-dans les sondes, il est enregistré illisible et **jamais retiré** — retirer serait
-un second tirage, biaisé si l'illisibilité dépend du coup. `resultat_600jetons.json`
-est gardé exprès, comme pièce.
+**An unread move is not guessed.** In games, it fails the game; in probes, it is
+recorded as unreadable and **never removed** — removing it would be a second
+draw, biased if unreadability depends on the move. `resultat_600jetons.json` is
+kept on purpose, as evidence.
 
-## Ce que ça ne vaut pas
+## What it is not worth
 
-- **Un seul adversaire** (Donnant-donnant), **une seule famille de modèles**
-  (Nemotron 3), **une seule température** (0,7). La phrase porte sur trois
-  tailles d'une famille, pas sur « les LLM ».
-- **Abandons.** 64 parties abandonnées en tout : 54 sur des pannes réseau
-  (`getaddrinfo failed`, coupures), qui ne peuvent pas corréler avec l'issue
-  d'une partie ; **10 sur deux coups illisibles de suite** (6 nano, 4 super). Même
-  si les 6 parties nano manquantes avaient toutes réparé, nano serait à 6 sur 24
-  contre 13 sur 14.
-- **Les sondes coupent le raisonnement à 6 000 jetons** : 1 à 3 réponses
-  illisibles par case chez ultra dans les situations profondes, exclues et
-  comptées à part dans `analyse_sondes.py`.
-- **Aucun classement de modèles, et il n'y en aura pas.** Le dépôt voisin a établi
-  que les palmarès dépendent du plateau.
+- **One opponent** (tit-for-tat), **one model family** (Nemotron 3), **one
+  temperature** (0.7). The claim is about three sizes of one family, not about
+  "LLMs".
+- **Dropouts.** 64 games dropped in total: 54 on network failures
+  (`getaddrinfo failed`, disconnections), which cannot correlate with a game's
+  outcome; **10 on two unreadable moves in a row** (6 nano, 4 super). Even if
+  the 6 missing nano games had all repaired, nano would be at 6 out of 24
+  against 13 out of 14.
+- **Probes cut reasoning at 6,000 tokens**: 1 to 3 unreadable answers per cell
+  for ultra in the deep states, excluded and counted separately in
+  `analyse_sondes.py`.
+- **No model ranking, and there won't be one.** The sibling repository showed
+  that leaderboards depend on the field.
 
-## Ce que ça coûte
+## What it costs
 
-| | appels | coût |
+| | calls | cost |
 | --- | --- | --- |
-| parties complètes (54) | ~2 700 | 1,96 $ |
-| sondes d'état | 1 838 | 3,90 $ |
+| full games (54) | ~2,700 | $1.96 |
+| state probes | 1,838 | $3.90 |
 
-Le coût d'un tour est porté par la délibération, pas par le jeu : la réponse fait
-un mot, le raisonnement des centaines à des milliers de jetons (médianes mesurées
-dans les sondes : nano 636, super 734, ultra 1 471).
+The cost of a round is carried by deliberation, not by the game: the answer is
+one word, the reasoning hundreds to thousands of tokens (medians measured in the
+probes: nano 636, super 734, ultra 1,471).
 
-## Les témoins viennent du dépôt voisin
+## The baselines come from the sibling repository
 
-[`Yoh5/tit-for-tat`](https://github.com/Yoh5/tit-for-tat) est le tournoi
-déterministe de référence : Pavlov se relève d'un accident en 2 à 3 tours, là où
-deux Donnant-donnant ne se relèvent pas dans 76 à 79 % des cas. La matrice de
-gains est **importée** de ce dépôt, jamais recopiée.
+[`Yoh5/tit-for-tat`](https://github.com/Yoh5/tit-for-tat) is the deterministic
+reference tournament: Pavlov recovers from an accident in 2 to 3 rounds, whereas
+two tit-for-tats fail to recover in 76 to 79% of cases. The payoff matrix is
+**imported** from that repository, never copied.
 
-## Faire tourner
+## Running it
 
-Les deux dépôts voisins sont attendus à côté de celui-ci (`AI_RACINE` permet de
-les ranger ailleurs) :
+The two sibling repositories are expected next to this one (`AI_RACINE` lets you
+put them elsewhere):
 
 ```
-un-dossier/
-├── tit-for-tat/        github.com/Yoh5/tit-for-tat   (matrice et stratégies)
-├── glassbox/           github.com/Yoh5/glassbox      (client Nebius, compteurs d'usage)
-└── tit-for-tat-llm/    ce dépôt
+some-folder/
+├── tit-for-tat/        github.com/Yoh5/tit-for-tat   (matrix and strategies)
+├── glassbox/           github.com/Yoh5/glassbox      (Nebius client, usage counters)
+└── tit-for-tat-llm/    this repository
 ```
 
 ```bash
-export NEBIUS_API_KEY=...          # set NEBIUS_API_KEY=... sous Windows
+export NEBIUS_API_KEY=...          # set NEBIUS_API_KEY=... on Windows
 
-python reparation.py --repetitions 20                       # parties complètes
-python sondes_etats.py --variantes base --n 30              # sondes d'état
-python sondes_etats.py --variantes lettres objectif ordre   # robustesse de l'invite
-python sondes_etats.py --variantes q_dernier q_prediction   # compréhension
-python sondes_etats.py --variantes indice                   # l'intervention
-python analyse_sondes.py                                    # tous les tableaux
-python figure_reparation.py                                 # la figure (matplotlib)
-python -m pytest test_mesures.py                            # les mesures testées
+python reparation.py --repetitions 20                       # full games
+python sondes_etats.py --variantes base --n 30              # state probes
+python sondes_etats.py --variantes lettres objectif ordre   # prompt robustness
+python sondes_etats.py --variantes q_dernier q_prediction   # comprehension
+python sondes_etats.py --variantes indice                   # the intervention
+python analyse_sondes.py                                    # all tables
+python figure_reparation.py                                 # the figure (matplotlib)
+python -m pytest test_mesures.py                            # the tested measures
 ```
 
-Chaque partie et chaque tirage sont écrits dès qu'ils finissent
-(`reparation.jsonl`, `sondes_etats.jsonl`) : une coupure ne redépense rien, et
-relancer reprend où on s'était arrêté. Toutes les figures et tous les tableaux
-sont recalculés depuis ces deux fichiers.
+Every game and every draw is written as soon as it finishes (`reparation.jsonl`,
+`sondes_etats.jsonl`): an interruption re-spends nothing, and restarting resumes
+where it stopped. All figures and tables are recomputed from these two files.
 
-## Le carnet
+The code identifiers and the analysis output are in French (*palier* = tier,
+*puni* = punished, *piège* = trap, *tentative* = attempt, *coup illisible* =
+unreadable move).
 
-`RECHERCHE.md` est le carnet de recherche : l'hypothèse de départ réfutée et
-déclarée telle, la variable recadrée deux fois, et la campagne complète au §8.
-C'est la partie de ce dépôt que je lirais d'abord.
+## The notebook
 
-## Licence
+`RECHERCHE.md` is the research notebook: the starting hypothesis refuted and
+declared as such, the variable reframed twice, and the full campaign in §8.
+It is the part of this repository I would read first.
 
-Apache-2.0. Voir `LICENSE`.
+## License
+
+Apache-2.0. See `LICENSE`.

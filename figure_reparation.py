@@ -29,14 +29,14 @@ SURFACE, ENCRE, ENCRE_2, GRILLE = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 PALIERS = [("nano", "#2a78d6", "o"), ("super", "#eb6834", "s"), ("ultra", "#1baf7a", "D")]
 
 ETATS = [
-    ("ouverture", "Tour 1, aucun historique"),
-    ("paix", "Après 10 tours de paix"),
-    ("victime", "Trahi sans raison"),
-    ("puni", "Puni après ma trahison"),
-    ("piege_1", "Trahison mutuelle, 1 tour"),
-    ("piege_3", "Trahison mutuelle, 3 tours"),
-    ("piege_8", "Trahison mutuelle, 8 tours"),
-    ("tentative", "Mon retour vient\nd'être exploité"),
+    ("ouverture", "Round 1, no history"),
+    ("paix", "After 10 rounds of peace"),
+    ("victime", "Betrayed for no reason"),
+    ("puni", "Punished after my defection"),
+    ("piege_1", "Mutual defection, 1 round"),
+    ("piege_3", "Mutual defection, 3 rounds"),
+    ("piege_8", "Mutual defection, 8 rounds"),
+    ("tentative", "My attempt to come back\nwas just exploited"),
 ]
 ETATS_INDICE = ["puni", "piege_3", "tentative"]
 
@@ -71,8 +71,8 @@ def panneau(ax, donnees, lignes, series, titre, marge_titre=34):
     ax.set_yticks(range(len(lignes)), [l for _, l in lignes], color=ENCRE, fontsize=10)
     ax.set_ylim(len(lignes) - 0.5, -0.5)
     ax.set_xlim(-0.03, 1.03)
-    ax.set_xticks([0, 0.25, 0.5, 0.75, 1], ["0", "0,25", "0,5", "0,75", "1"], color=ENCRE_2, fontsize=9)
-    ax.set_xlabel("probabilité de coopérer au tour suivant", color=ENCRE_2, fontsize=9)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1], ["0", "0.25", "0.5", "0.75", "1"], color=ENCRE_2, fontsize=9)
+    ax.set_xlabel("probability of cooperating next round", color=ENCRE_2, fontsize=9)
     ax.grid(axis="x", color=GRILLE, lw=1, zorder=1)
     ax.set_axisbelow(True)
     for s in ax.spines.values():
@@ -91,22 +91,22 @@ def main() -> None:
 
     panneau(g, D, ETATS,
             [("base", p, c, m, p) for p, c, m in PALIERS],
-            "Ce qui sépare les tailles : revenir, pas riposter")
+            "What separates the sizes: coming back, not retaliating")
     g.legend(loc="lower left", frameon=False, fontsize=9.5, labelcolor=ENCRE,
              bbox_to_anchor=(0.0, 1.02), ncol=3, handletextpad=0.3, columnspacing=1.2,
              borderaxespad=0)
 
     lignes = [(e, l) for e, l in ETATS if e in ETATS_INDICE]
     panneau(d, D, lignes,
-            [("base", "nano", "#2a78d6", "o", "nano, invite de base"),
-             ("indice", "nano", "#e87ba4", "^", "nano, + « l'adversaire joue tit-for-tat »")],
-            "Nano revient quand on lui dit la règle", marge_titre=56)
+            [("base", "nano", "#2a78d6", "o", "nano, base prompt"),
+             ("indice", "nano", "#e87ba4", "^", 'nano, + "your opponent plays tit-for-tat"')],
+            "Nano comes back when told the rule", marge_titre=56)
     d.legend(loc="lower left", frameon=False, fontsize=9.5, labelcolor=ENCRE,
              bbox_to_anchor=(0.0, 1.02), ncol=1, handletextpad=0.3, borderaxespad=0)
 
     fig.text(0.012, -0.04,
-             "Nemotron 3 (nano 30B, super 120B, ultra 550B) contre Donnant-donnant, température 0,7. "
-             "Chaque point : 20 à 30 tirages dans le même historique fabriqué ; barres = IC 95 % de Wilson.",
+             "Nemotron 3 (nano 30B, super 120B, ultra 550B) against tit-for-tat, temperature 0.7. "
+             "Each point: 20 to 30 draws in the same fabricated history; bars = Wilson 95% CI.",
              color=ENCRE_2, fontsize=8.5)
     SORTIE.parent.mkdir(exist_ok=True)
     fig.savefig(SORTIE, dpi=160, bbox_inches="tight", facecolor=SURFACE)
