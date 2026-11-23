@@ -349,3 +349,84 @@ case**, not "I'm testing its reaction". It is the second reading of §3.
 *Among three sizes of the same model, all hit back; what changes is knowing how
 to come back. The smallest one reads the game perfectly but does not expect an
 imitator to forgive — and when told, it comes back.*
+
+## 9. Campaign of 23/11/2026 — other families, and the noise run that was never written up
+
+### 9.1 Is the repair gap a Nemotron quirk? Nineteen more models
+
+`sondes_familles.py` replays **the same fabricated histories and the same prompt** (imported from
+`sondes_etats.py`, not copied) on 19 models: 8 on Nebius (Qwen3 30B/235B Instruct, DeepSeek V4.1 Flash /
+V4 Pro, MiniMax M3.1-Flash / M3, Gemma 3 27B, gpt-oss-120b; 6 states x 30 draws) and 11 on OpenRouter,
+in ladders of **one generation** (GPT-5 nano/mini/full, Claude 4.5 Haiku/Sonnet/Opus, Gemini 2.5
+Flash-Lite/Flash/Pro, Llama 4 Scout/Maverick; 3 states x 20 draws). Prices read from each provider's
+`/models` at run time. Cost: **$6.2** (2.69 Nebius + 3.23 OpenRouter + 0.29 pilots). Analysis:
+`analyse_familles.py`.
+
+P(cooperate | **punished**), the state the publishable claim is about:
+
+| family | small | mid | large |
+|---|---|---|---|
+| Nemotron 3 (published) | 0.13 | 0.87 | 0.97 |
+| Gemini 2.5 | **0.10** | **0.10** | 1.00 |
+| Llama 4 | **0.20** | — | 0.70 |
+| GPT-5 | 0.81 | 1.00 | 0.95 |
+| Claude 4.5 | 1.00 | 1.00 | 1.00 |
+| Qwen3 Instruct | 1.00 | — | 1.00 |
+| DeepSeek V4 | 1.00 | — | 1.00 |
+| MiniMax M3 | 1.00 | — | 1.00 |
+| singletons | Gemma 3 27B **0.40**, gpt-oss-120b 0.73 | | |
+
+**What holds.**
+- **Nemotron nano is not alone.** Gemini Flash-Lite, Gemini Flash, Llama 4 Scout and Gemma 3 fail the same
+  way: they hit back, then do not come back.
+- **Within a family, the largest model never repairs less than the smallest** in the punished state (8 ladders;
+  GPT-5 full, 0.95, sits just under mini, 1.00, within noise).
+- **Retaliation is near-universal**: defected against for no reason, 18 of 22 models cooperate at most 0.15.
+
+**What does not hold, and changes the claim.**
+- **It is not size.** Four families show no gap at all (Claude, Qwen, DeepSeek, MiniMax: small models repair
+  at 1.00), and Gemini **Flash**, not a small model, fails like Flash-Lite. The published sentence
+  "between sizes, what changes is knowing how to come back" is true **inside the families that have a
+  non-repairing member**, and only there.
+- **It is not deliberation either.** Median completion tokens vs P(C|punished) across the 22 models:
+  Spearman rho = **0.24**. Qwen answers in 4 tokens and always repairs; Nemotron nano reasons 733 tokens
+  and does not; Gemini goes 0.10 → 1.00 only with Pro, which reasons ~2,600 tokens, but Flash-Lite reasons
+  218 and still fails.
+
+**Side findings.**
+- **Qwen forgives**: victim state 1.00 (30B) and 0.47 (235B) — the only family that does not retaliate.
+  MiniMax M3.1-Flash 0.50, Claude Haiku 0.35.
+- **MiniMax M3 large gives up after an exploited attempt** (0.47 vs 0.83 for its small sibling): the one
+  ladder where the larger model is *less* forgiving, in the state where nano broke in real games.
+
+**Caveats.**
+- Unreadable moves, all `finish_reason=length` at 6,000 tokens, kept unreadable and excluded: DeepSeek
+  Flash 19, DeepSeek Pro 19 (13 in `tentative`), MiniMax Flash 6, GPT-5 nano 5. If truncation depends on
+  the move about to be played, those cells are biased.
+- OpenRouter models: 3 states only, 20 draws. Gemini 2.5 Flash answered in ~2 tokens through OpenRouter:
+  its thinking was not triggered by default, so "Flash" here means Flash without thinking.
+- One prompt (base). §8.4 showed the Nemotron gap survives four wordings; that is not yet shown here.
+
+**The claim, revised again.**
+*Some models — not the small ones in general — hit back and then cannot come back. Within a family that has
+such a member, the larger model repairs. The defect is not explained by size alone nor by how long the
+model reasons.* The next question is what those five models share (training recipe? distillation? the
+same "fast" product line?), and whether the tit-for-tat hint (§8.5) rescues them as it rescued nano.
+
+### 9.2 The noise run (§6.3), done in October, never written up
+
+`experience_bruit.py`, execution noise (each intended move flipped with probability p, both players see
+only executed moves), 40 rounds against tit-for-tat, `resultats_bruit.json`:
+
+| tier | noise | games | gain/round | share of mutual defection | mean DD run |
+|---|---|---|---|---|---|
+| nano | 0.05 | 3 | 1.70 | **65 %** | **10.7** |
+| nano | 0.10 | 2 | 1.68 | **70 %** | 5.8 |
+| super | 0.10 | 2 | 2.30 | 16 % | 1.6 |
+| ultra | 0.05 | 1 | 2.70 | 2 % | 1.0 |
+| ultra | 0.10 | 3 | 2.40 | 12 % | 1.3 |
+
+The prediction of §6.3 holds in direction: **the tiers that repair survive noise, nano sinks into mutual
+defection**. Under noise, super and ultra score slightly *less* than their tit-for-tat opponent: they absorb
+its accidental defections. Too few games (1-3 per cell; 3 games lost to `getaddrinfo` before round 0) to
+state more than a direction.

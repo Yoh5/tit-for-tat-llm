@@ -1,4 +1,4 @@
-# What separates three sizes of the same model is knowing how to come back
+# LLM agents hit back; some cannot come back — and it is not about size
 
 > **En bref (français).** Un agent LLM joue le dilemme du prisonnier itéré contre
 > Donnant-donnant, à trois tailles d'un même modèle (Nemotron 3 : 30B, 120B, 550B).
@@ -7,8 +7,16 @@
 > 0,87 et 1,00 pour les deux autres, dans le même historique fabriqué. Le plus
 > petit lit parfaitement la partie, mais ne prévoit pas qu'un imitateur pardonne ;
 > quand on lui dit que l'adversaire joue Donnant-donnant, il revient (0,13 → 1,00).
-> L'écart survit à quatre variantes de l'invite. Le carnet de recherche complet
-> est dans `RECHERCHE.md`.
+> L'écart survit à quatre variantes de l'invite.
+>
+> **Mise à jour du 23/11/2026 : 19 autres modèles.** Le même test sur six autres
+> familles (GPT-5, Claude 4.5, Gemini 2.5, Llama 4, Qwen3, DeepSeek V4, MiniMax,
+> Gemma, gpt-oss) **corrige la conclusion** : ce n'est pas une affaire de taille.
+> Cinq modèles ne savent pas revenir (Nemotron nano, Gemini Flash-Lite et Flash,
+> Llama 4 Scout, Gemma 3) ; quatre familles réparent dès leur plus petit modèle.
+> Dans une famille qui a un tel membre, le plus grand répare. La longueur de
+> réflexion ne l'explique pas (rho = 0,24). Le carnet de recherche complet est
+> dans `RECHERCHE.md` (§9).
 
 An LLM agent plays the iterated prisoner's dilemma against tit-for-tat, at three
 sizes of the same model (Nemotron 3: nano 30B, super 120B, ultra 550B). The
@@ -22,6 +30,12 @@ coming back to cooperation once they have been punished.
 
 **The smallest one reads the game perfectly, but does not expect an imitator to
 forgive — and when told, it comes back.**
+
+> **Update, 23/11/2026 — the size story does not generalise.** Run on 19 more
+> models from other families (section below), the repair gap reappears, but
+> **not as a size effect**: five models fail to come back, four families repair
+> from their smallest model up. The Nemotron result below still stands; what it
+> says about "size" holds only inside families that have a non-repairing member.
 
 ## The result, in three measures
 
@@ -63,6 +77,50 @@ that is not smoothed over: even when it predicts correctly (0.73 of cases, when
 punished), it only comes back 0.13 of the time. Predicting is not enough to make
 it act; the stated rule is.
 
+## Does it generalise? Nineteen more models (23/11/2026)
+
+`sondes_familles.py` replays **the same fabricated histories and the same
+prompt** (imported from `sondes_etats.py`, not copied) on 8 models served by
+Nebius (6 states x 30 draws) and 11 closed models through OpenRouter, in ladders
+of **one generation** (3 states x 20 draws). Prices are read from each
+provider's `/models` endpoint at run time. Cost: $6.2.
+
+P(cooperate) when **punished after its own defection**:
+
+| family | small | mid | large |
+| --- | --- | --- | --- |
+| Nemotron 3 (above) | 0.13 | 0.87 | 0.97 |
+| Gemini 2.5 (Flash-Lite / Flash / Pro) | **0.10** | **0.10** | 1.00 |
+| Llama 4 (Scout / Maverick) | **0.20** | — | 0.70 |
+| GPT-5 (nano / mini / full) | 0.81 | 1.00 | 0.95 |
+| Claude 4.5 (Haiku / Sonnet / Opus) | 1.00 | 1.00 | 1.00 |
+| Qwen3 Instruct (30B / 235B) | 1.00 | — | 1.00 |
+| DeepSeek V4 (Flash / Pro) | 1.00 | — | 1.00 |
+| MiniMax (M3.1-Flash / M3) | 1.00 | — | 1.00 |
+| singletons | Gemma 3 27B **0.40** | | gpt-oss-120b 0.73 |
+
+- **Nemotron nano is not alone**: Gemini Flash-Lite, Gemini Flash, Llama 4 Scout
+  and Gemma 3 also hit back and then do not come back.
+- **It is not size**: four families show no gap (their small models repair at
+  1.00), and Gemini Flash fails like Flash-Lite. **Within a family, the largest
+  model never repairs less than the smallest** in this state (8 ladders; GPT-5
+  full, 0.95, sits just under mini, 1.00, within noise).
+- **It is not how long the model reasons**: across the 22 models, median
+  completion tokens vs P(C | punished) gives Spearman rho = 0.24. Qwen answers in
+  4 tokens and always repairs; nano reasons 733 and does not.
+- **Retaliation is near-universal**: betrayed for no reason, 18 of 22 models
+  cooperate at most 0.15. The exception is **Qwen, which forgives** (1.00 for
+  30B, 0.47 for 235B).
+
+Caveats: one prompt for the new families; 3 states only through OpenRouter;
+Gemini 2.5 Flash answered in about 2 tokens through OpenRouter, so its thinking
+was not triggered; DeepSeek hit the 6,000-token cap on 38 draws (kept
+unreadable, excluded, counted in `analyse_familles.py`).
+
+**The claim, revised:** *some models — not the small ones in general — hit back
+and then cannot come back; within a family that has such a member, the larger
+model repairs.* What these five models share is the open question.
+
 ## What was done to try to break it
 
 - **Removing selection.** In a game, a model that never defects is never
@@ -97,9 +155,9 @@ kept on purpose, as evidence.
 
 ## What it is not worth
 
-- **One opponent** (tit-for-tat), **one model family** (Nemotron 3), **one
-  temperature** (0.7). The claim is about three sizes of one family, not about
-  "LLMs".
+- **One opponent** (tit-for-tat), **one temperature** (0.7). The mechanism
+  (§8.5 of the notebook) was shown on Nemotron only; the 19 other models were
+  measured on the base prompt only.
 - **Dropouts.** 64 games dropped in total: 54 on network failures
   (`getaddrinfo failed`, disconnections), which cannot correlate with a game's
   outcome; **10 on two unreadable moves in a row** (6 nano, 4 super). Even if
@@ -117,6 +175,7 @@ kept on purpose, as evidence.
 | --- | --- | --- |
 | full games (54) | ~2,700 | $1.96 |
 | state probes | 1,838 | $3.90 |
+| other families (23/11) | ~2,100 | $6.2 |
 
 The cost of a round is carried by deliberation, not by the game: the answer is
 one word, the reasoning hundreds to thousands of tokens (medians measured in the
@@ -150,6 +209,9 @@ python sondes_etats.py --variantes lettres objectif ordre   # prompt robustness
 python sondes_etats.py --variantes q_dernier q_prediction   # comprehension
 python sondes_etats.py --variantes indice                   # the intervention
 python analyse_sondes.py                                    # all tables
+python sondes_familles.py --n 30                            # other families (Nebius)
+python sondes_familles.py --modeles gpt-s gpt-m gpt-l claude-s claude-m claude-l     gemini-s gemini-m gemini-l llama-s llama-l --etats puni victime paix --n 20     --sortie sondes_openrouter.jsonl                        # needs OPENROUTER_API_KEY
+python analyse_familles.py                                  # the cross-family table
 python figure_reparation.py                                 # the figure (matplotlib)
 python -m pytest test_mesures.py                            # the tested measures
 ```
@@ -166,7 +228,8 @@ unreadable move).
 
 `RECHERCHE.md` is the research notebook: the starting hypothesis refuted and
 declared as such, the variable reframed twice, and the full campaign in §8.
-It is the part of this repository I would read first.
+§9 holds the cross-family campaign and the noise run. It is the part of this
+repository I would read first.
 
 ## License
 
