@@ -430,3 +430,29 @@ The prediction of §6.3 holds in direction: **the tiers that repair survive nois
 defection**. Under noise, super and ultra score slightly *less* than their tit-for-tat opponent: they absorb
 its accidental defections. Too few games (1-3 per cell; 3 games lost to `getaddrinfo` before round 0) to
 state more than a direction.
+
+### 9.3 The tit-for-tat hint on the other non-repairers (23/11/2026, $0.30)
+
+Same intervention as §8.5 ("Your opponent plays tit-for-tat…"), 20 draws per cell, on the four other
+models that do not come back (`sondes_indice.jsonl`; base cells for `piege_3`/`tentative` added to
+`sondes_openrouter.jsonl` for the OpenRouter models).
+
+| model | punished: base → hint | trapped 3: base → hint | exploited attempt: base → hint |
+|---|---|---|---|
+| Nemotron 3 Nano (§8.5) | 0.13 → **1.00** | 0.17 → **0.85** | 0.03 → **0.75** |
+| Gemini 2.5 Flash | 0.10 → **1.00** | 0.05 → **0.95** | 0.05 → **0.85** |
+| Llama 4 Scout | 0.20 → **0.85** | 0.75 → 0.80 | 0.25 → 0.65 |
+| Gemma 3 27B | 0.40 → 0.60 | 0.20 → **0.05** | 0.23 → 0.55 |
+| Gemini 2.5 Flash-Lite | 0.10 → 0.45 | 0.15 → **0.05** | 0.05 → 0.10 |
+
+**Two kinds of non-repairer, not one.**
+- **Nano, Gemini Flash, Llama Scout: the missing piece is the model of the opponent.** Told the rule, they
+  come back.
+- **Gemma 3 and Gemini Flash-Lite: told the rule, they still do not — and when trapped, the hint makes them
+  defect *more*** (0.20 → 0.05, 0.15 → 0.05). Read literally, the rule says the opponent will defect next
+  round (it copies my last D); a one-round best response is then to defect too. Coming back requires
+  accepting the 0 payoff once to restore 3 per round later. These two read the rule and play the
+  next round, not the game. A shorter horizon, not a missing opponent model.
+
+This is a direction from 20 draws per cell, on one wording of the hint; the horizon reading is an
+interpretation of the trap cells, not yet tested directly (e.g. by stating the number of rounds left).
